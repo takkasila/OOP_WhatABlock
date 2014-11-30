@@ -29,6 +29,12 @@ class IsoBlock(object):
 			renderRect = pygame.Rect(self.worldRect.left - camPos.getX(), self.worldRect.top - camPos.getY(), self.worldRect.width, self.worldRect.height)
 			display.blit(image, renderRect)
 
+	def getWidth(self):
+		return self.width
+
+	def getHeight(self):
+		return self.height
+
 	def getPos(self): 
 		return self.screenPos
 

@@ -73,6 +73,12 @@ class Map(object):
 			player.render(display, camPos)
 			renderedPlayer = True
 
+		self.resetVisible()
+
+	def resetVisible(self):
+		for block in self.isoBlocks:
+			block.setVisible(False)
+
 	def getBlocks(self):
 		return self.isoBlocks
 

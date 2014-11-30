@@ -7,14 +7,12 @@ from MapCollection import *
 from Player import *
 from inputManager import *
 from RFIDReader import *
+from Revealer import *
 
 import sys
 import os
 
 #TODOs :
-#	Mark Start and FinishLine block
-#	Have different textures for start, normal, finishLine
-#	Change between world
 #	Make the revelver with radius and centerPosition
 class WhatABlockGame(object):
 
@@ -29,12 +27,15 @@ class WhatABlockGame(object):
 	player = ''
 	inputManager = ''
 	myRFIDReader = ''
+	player_revealver = ''
 
 
 	def __init__(self, WINDOW_SIZE):
 
 		self.WINDOW_SIZE = WINDOW_SIZE
 		self.isGameOver = False
+		self.playWithRFID = False
+
 		self.folderDir = os.path.split(os.getcwd())[0]
 		self.assetDir = self.folderDir + '/Assets/'
 
@@ -48,8 +49,11 @@ class WhatABlockGame(object):
 		self.cam = Camera(offSet = Vector2(WINDOW_SIZE.getX()/2 , WINDOW_SIZE.getY()/2 - self.player.getHeight()/2), camSize = WINDOW_SIZE)
 
 		self.inputManager = InputManager()
-		self.myRFIDReader = RFIDReader()
-		self.inputManager.setRFIDInput(self.myRFIDReader)
+		if self.playWithRFID:
+			self.myRFIDReader = RFIDReader()
+			self.inputManager.setRFIDInput(self.myRFIDReader)
+
+		self.player_revealver = Revealer(IsoToScreen(self.player.getIsoPos(), self.mapCollection.getBlockSize().getX(), self.mapCollection.getBlockSize().getY()), 100)
 
 	def loadAssets(self):
 		
@@ -69,6 +73,9 @@ class WhatABlockGame(object):
 		self.inputs()
 
 		self.player.update()
+		self.player_revealver.setPos(self.player.getScreenPos())
+		self.player_revealver.reveal(isoBlocks = self.mapCollection.getCurrentMapObject().getBlocks())
+
 		self.checkPlayerFall()
 		self.checkPlayerFallOut()
 		self.checkChangeWorld()
@@ -106,10 +113,10 @@ class WhatABlockGame(object):
 
 
 	def inputs(self):
-
-		inRFID = self.myRFIDReader.getInput()
-		if inRFID != 9999:
-			self.controlPlayerByRFID(inRFID)
+		if self.playWithRFID:
+			inRFID = self.myRFIDReader.getInput()
+			if inRFID != 9999:
+				self.controlPlayerByRFID(inRFID)
 		else :
 			self.controlPlayerByKeyboard()
 			
