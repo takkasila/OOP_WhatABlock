@@ -49,7 +49,7 @@ class WhatABlockGame(object):
 
 	def loadAssets(self):
 		
-		self.mapCollection = MapCollection(currentMap = 2, assetDir = self.assetDir, WINDOW_SIZE = self.WINDOW_SIZE)
+		self.mapCollection = MapCollection(currentMap = 0, assetDir = self.assetDir, WINDOW_SIZE = self.WINDOW_SIZE)
 		self.player = Player(self.mapCollection.getCurrentMapObject().getPlayerStartPos(), assetDir = self.assetDir, blockWidth = self.mapCollection.getBlockSize().getX(), blockHeight = self.mapCollection.getBlockSize().getY(), moveSpeed = 0.1)
 
 
@@ -89,12 +89,14 @@ class WhatABlockGame(object):
 			self.player.setMoveAble(True)
 
 	def checkChangeWorld(self):
-		playerPos = self.player.getIso()
+		playerPos = self.player.getIsoPos()
 		playerPos = [playerPos.getX(), playerPos.getY()]
 		finishBlockPos = self.mapCollection.getCurrentMapObject().getFinishBlockIso()
 		finishBlockPos = [finishBlockPos.getX(), finishBlockPos.getY()]
 		if playerPos == finishBlockPos:
 			self.mapCollection.setCurrentMapIndex(self.mapCollection.getCurrentMapIndex() + 1)
+			startPos = self.mapCollection.getCurrentMapObject().getStartBlockIso()
+			self.player.setIsoPos(startPos)
 
 
 	def inputs(self):
