@@ -6,6 +6,7 @@ from Camera import *
 from MapCollection import *
 from Player import *
 from inputManager import *
+from RFIDReader import *
 
 import sys
 import os
@@ -27,6 +28,8 @@ class WhatABlockGame(object):
 	mapCollection = ''
 	player = ''
 	inputManager = ''
+	rfidQueue = []
+	RFIDReader = ''
 
 
 	def __init__(self, WINDOW_SIZE):
@@ -46,6 +49,8 @@ class WhatABlockGame(object):
 		self.cam = Camera(offSet = Vector2(WINDOW_SIZE.getX()/2 , WINDOW_SIZE.getY()/2 - self.player.getHeight()/2), camSize = WINDOW_SIZE)
 
 		self.inputManager = InputManage()
+		self.rfidQueue = []
+		self.RFIDReader = RFIDReader()
 
 	def loadAssets(self):
 		
@@ -61,7 +66,11 @@ class WhatABlockGame(object):
 		pygame.display.flip()
 
 	def update(self):
+
+		print self.rfidQueue
 		self.inputs()
+		self.inputRFID()
+
 		self.player.update()
 		self.checkPlayerFall()
 		self.checkPlayerFallOut()
@@ -122,6 +131,11 @@ class WhatABlockGame(object):
 					
 				if event.key == self.inputManager.Left:
 					self.player.actionQueue.append(Player.WalkLeftCM)
+
+	def inputRFID(self):
+		inRFID = self.RFIDReader.getInput()
+		if inRFID != 9999:
+			self.rfidQueue.append(inRFID)
 
 def main():
 

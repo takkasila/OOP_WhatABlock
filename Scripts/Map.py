@@ -3,8 +3,6 @@ from IsoBlock import *
 
 class Map(object):
 
-	#TODO : Still bug about map rendering
-
 	isoBlocks = []
 	xyBlockList = []
 	playerStartPos = 0
