@@ -8,12 +8,13 @@ from Player import *
 from inputManager import *
 from RFIDReader import *
 from Revealer import *
+from BomRevealer import *
 
 import sys
 import os
 
 #TODOs :
-#	Make the revelver with radius and centerPosition
+#	Revealers should be manage life with player
 class WhatABlockGame(object):
 
 	WINDOW_SIZE = Vector2(1024, 768)
@@ -53,7 +54,9 @@ class WhatABlockGame(object):
 			self.myRFIDReader = RFIDReader()
 			self.inputManager.setRFIDInput(self.myRFIDReader)
 
-		self.player_revealver = Revealer(IsoToScreen(self.player.getIsoPos(), self.mapCollection.getBlockSize().getX(), self.mapCollection.getBlockSize().getY()), 100)
+		self.player_revealver = Revealer(IsoToScreen(self.player.getIsoPos(), self.mapCollection.getBlockSize().getX(), self.mapCollection.getBlockSize().getY()), 60)
+
+		self.testBomb = BomRevealer(startScreenPos = Vector2.Zero(), maxRadius = 400, revealSpeed = 2)
 
 	def loadAssets(self):
 		
@@ -73,8 +76,10 @@ class WhatABlockGame(object):
 		self.inputs()
 
 		self.player.update()
+
 		self.player_revealver.setPos(self.player.getScreenPos())
 		self.player_revealver.reveal(isoBlocks = self.mapCollection.getCurrentMapObject().getBlocks())
+		self.testBomb.reveal(isoBlocks = self.mapCollection.getCurrentMapObject().getBlocks())
 
 		self.checkPlayerFall()
 		self.checkPlayerFallOut()
@@ -117,8 +122,8 @@ class WhatABlockGame(object):
 			inRFID = self.myRFIDReader.getInput()
 			if inRFID != 9999:
 				self.controlPlayerByRFID(inRFID)
-		else :
-			self.controlPlayerByKeyboard()
+			else :
+				self.controlPlayerByKeyboard()
 			
 
 	def controlPlayerByRFID(self, id):

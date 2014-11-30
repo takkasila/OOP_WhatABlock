@@ -1,16 +1,14 @@
 class NiceClass(object):
-	A = 0
+	
 	def __init__(self):
-		NiceClass.A = 1
-
-	def getA(self):
-		return NiceClass.A
+		pass
 		
 		
 def main():
 	myClass = NiceClass()
-	
-	print NiceClass.A
+	print myClass
+	del myClass
+	print myClass
 
 if __name__=='__main__':
     main()

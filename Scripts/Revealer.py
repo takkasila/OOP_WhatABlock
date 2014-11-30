@@ -1,7 +1,7 @@
 from WhatABlock_GameLib import *
 
 class Revealer(object):
-	def __init__(self, startScreenPos, radius):
+	def __init__(self, startScreenPos, radius = 0):
 
 		self.screenPos = startScreenPos
 		self.radius = radius
