@@ -28,8 +28,7 @@ class WhatABlockGame(object):
 	mapCollection = ''
 	player = ''
 	inputManager = ''
-	rfidQueue = []
-	RFIDReader = ''
+	myRFIDReader = ''
 
 
 	def __init__(self, WINDOW_SIZE):
@@ -48,9 +47,9 @@ class WhatABlockGame(object):
 		
 		self.cam = Camera(offSet = Vector2(WINDOW_SIZE.getX()/2 , WINDOW_SIZE.getY()/2 - self.player.getHeight()/2), camSize = WINDOW_SIZE)
 
-		self.inputManager = InputManage()
-		self.rfidQueue = []
-		self.RFIDReader = RFIDReader()
+		self.inputManager = InputManager()
+		self.myRFIDReader = RFIDReader()
+		self.inputManager.setRFIDInput(self.myRFIDReader)
 
 	def loadAssets(self):
 		
@@ -67,9 +66,7 @@ class WhatABlockGame(object):
 
 	def update(self):
 
-		print self.rfidQueue
 		self.inputs()
-		self.inputRFID()
 
 		self.player.update()
 		self.checkPlayerFall()
@@ -110,12 +107,34 @@ class WhatABlockGame(object):
 
 	def inputs(self):
 
-		for event in pygame.event.get():
+		inRFID = self.myRFIDReader.getInput()
+		if inRFID != 9999:
+			self.controlPlayerByRFID(inRFID)
+		else :
+			self.controlPlayerByKeyboard()
+			
 
+	def controlPlayerByRFID(self, id):
+
+		if id == InputManager.TopRFID:
+			self.player.actionQueue.append(Player.WalkTopCM)
+
+		if id == InputManager.DownRFID:
+			self.player.actionQueue.append(Player.WalkDownCM)
+
+		if id == InputManager.RightRFID:
+			self.player.actionQueue.append(Player.WalkRightCM)
+
+		if id == InputManager.LeftRFID:
+			self.player.actionQueue.append(Player.WalkLeftCM)
+
+
+	def controlPlayerByKeyboard(self):
+		for event in pygame.event.get():
 			if (event.type == QUIT): 
 				self.isGameOver = True
 
-			if (event.type == KEYDOWN ) and (self.player.isMoveAble()):
+			if self.player.isMoveAble() and event.type == KEYDOWN:
 
 				if event.key == self.inputManager.Exit:
 					self.isGameOver = True
@@ -132,10 +151,7 @@ class WhatABlockGame(object):
 				if event.key == self.inputManager.Left:
 					self.player.actionQueue.append(Player.WalkLeftCM)
 
-	def inputRFID(self):
-		inRFID = self.RFIDReader.getInput()
-		if inRFID != 9999:
-			self.rfidQueue.append(inRFID)
+
 
 def main():
 
