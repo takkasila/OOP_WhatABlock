@@ -1,5 +1,11 @@
 from math import *
 
+def getCos30():
+	return 0.866
+def getSin30():
+	return 0.5
+
+
 class Vector2():
 
 	def __init__(self, x, y):

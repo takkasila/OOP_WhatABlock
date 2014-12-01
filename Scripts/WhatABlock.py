@@ -8,13 +8,17 @@ from Player import *
 from inputManager import *
 from RFIDReader import *
 from Revealer import *
-from BomRevealer import *
 
 import sys
 import os
 
 #TODOs :
 #	Revealers should be manage life with player
+#	Add firing-type revealer
+#	Config overall control
+#	Add walking sound
+# 	Add BG sound
+#	Add teleporting sound(change to new level)
 class WhatABlockGame(object):
 
 	WINDOW_SIZE = Vector2(1024, 768)
@@ -35,7 +39,7 @@ class WhatABlockGame(object):
 
 		self.WINDOW_SIZE = WINDOW_SIZE
 		self.isGameOver = False
-		self.playWithRFID = False
+		self.playWithRFID = True
 
 		self.folderDir = os.path.split(os.getcwd())[0]
 		self.assetDir = self.folderDir + '/Assets/'
@@ -56,8 +60,6 @@ class WhatABlockGame(object):
 
 		self.player_revealver = Revealer(IsoToScreen(self.player.getIsoPos(), self.mapCollection.getBlockSize().getX(), self.mapCollection.getBlockSize().getY()), 60)
 
-		self.testBomb = BomRevealer(startScreenPos = Vector2.Zero(), maxRadius = 400, revealSpeed = 2)
-
 	def loadAssets(self):
 		
 		self.mapCollection = MapCollection(currentMap = 0, assetDir = self.assetDir, WINDOW_SIZE = self.WINDOW_SIZE)
@@ -75,11 +77,10 @@ class WhatABlockGame(object):
 
 		self.inputs()
 
-		self.player.update()
+		self.player.update(isoBlocks = self.mapCollection.getCurrentMapObject().getBlocks())
 
 		self.player_revealver.setPos(self.player.getScreenPos())
 		self.player_revealver.reveal(isoBlocks = self.mapCollection.getCurrentMapObject().getBlocks())
-		self.testBomb.reveal(isoBlocks = self.mapCollection.getCurrentMapObject().getBlocks())
 
 		self.checkPlayerFall()
 		self.checkPlayerFallOut()
@@ -115,6 +116,8 @@ class WhatABlockGame(object):
 			self.mapCollection.setCurrentMapIndex(self.mapCollection.getCurrentMapIndex() + 1)
 			startPos = self.mapCollection.getCurrentMapObject().getStartBlockIso()
 			self.player.setIsoPos(startPos)
+			self.player.setBomb(self.player.getBomb() + 1)
+			self.player.setBullet(self.player.getBullet() + 3)
 
 
 	def inputs(self):
@@ -124,6 +127,8 @@ class WhatABlockGame(object):
 				self.controlPlayerByRFID(inRFID)
 			else :
 				self.controlPlayerByKeyboard()
+		else :
+			self.controlPlayerByKeyboard()
 			
 
 	def controlPlayerByRFID(self, id):
@@ -139,6 +144,22 @@ class WhatABlockGame(object):
 
 		if id == InputManager.LeftRFID:
 			self.player.actionQueue.append(Player.WalkLeftCM)
+
+		if id == InputManager.BombRFID:
+			self.player.actionQueue.append(Player.UseBombCM)
+
+		if id == InputManager.BulletTopRFID:
+			self.player.actionQueue.append(Player.UseBulletTopCM)
+
+		if id == InputManager.BulletDownRFID:
+			self.player.actionQueue.append(Player.UseBulletDownCM)
+
+		if id == InputManager.BulletRightRFID:
+			self.player.actionQueue.append(Player.UseBulletRightCM)
+
+		if id == InputManager.BulletLeftRFID:
+			self.player.actionQueue.append(Player.UseBulletLeftCM)
+
 
 
 	def controlPlayerByKeyboard(self):
@@ -162,6 +183,21 @@ class WhatABlockGame(object):
 					
 				if event.key == self.inputManager.Left:
 					self.player.actionQueue.append(Player.WalkLeftCM)
+
+				if event.key == self.inputManager.Bomb:
+					self.player.actionQueue.append(Player.UseBombCM)
+
+				if event.key == self.inputManager.BulletTop:
+					self.player.actionQueue.append(Player.UseBulletTopCM)
+				
+				if event.key == self.inputManager.BulletDown:
+					self.player.actionQueue.append(Player.UseBulletDownCM)
+
+				if event.key == self.inputManager.BulletRight:
+					self.player.actionQueue.append(Player.UseBulletRightCM)
+
+				if event.key == self.inputManager.BulletLeft:
+					self.player.actionQueue.append(Player.UseBulletLeftCM)
 
 
 

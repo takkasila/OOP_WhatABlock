@@ -1,14 +1,11 @@
-class NiceClass(object):
-	
-	def __init__(self):
-		pass
+
 		
 		
 def main():
-	myClass = NiceClass()
-	print myClass
-	del myClass
-	print myClass
+	l = [1,2,3,4,5]
+
+	for i in range(len(l)):
+		print i, l[i]
 
 if __name__=='__main__':
     main()

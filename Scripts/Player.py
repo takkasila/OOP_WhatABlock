@@ -1,6 +1,8 @@
 from WhatABlock_GameLib import *
 import pygame
 from pygame.locals import *
+from BomRevealer import *
+from MovingRevealer import *
 
 class Player(object):
 
@@ -18,11 +20,25 @@ class Player(object):
 	WalkDownCM = 'wDown'
 	WalkRightCM = 'wRight'
 	WalkLeftCM = 'wLeft'
+
+	UseBombCM = 'uBomb'
+	UseBulletTopCM = 'uBulletTop'
+	UseBulletDownCM = 'uBulletDown'
+	UseBulletRightCM = 'uBulletRight'
+	UseBulletLeftCM = 'uBulletLeft'
+
 	isWalking = False
 	moveSpeed = 0
 	moveAble = True
 
 	actionQueue = []
+
+	revealerList = []
+	bomb = 1
+	bullet = 3
+	BulletRadius = 60
+	BulletLifeTime = 300
+	BulletSpeed = 1
 
 	def __init__(self, startIsoPos, assetDir, blockWidth, blockHeight, moveSpeed):
 		#movespeed is percentage of lerp. Scale from 0 to 1
@@ -53,6 +69,9 @@ class Player(object):
 		self.targetIsoPos = self.isoPos
 		self.targetScreenPos = self.screenPos
 
+		self.revealerList = []
+		self.bomb = 1
+
 
 
 	def render(self, display, camPos):
@@ -63,7 +82,7 @@ class Player(object):
 		renderRect.left -= self.width/2
 		display.blit(self.playerImage, renderRect)
 
-	def update(self):
+	def update(self, isoBlocks):
 		if self.actionQueue:
 			if self.actionQueue[0] == Player.WalkTopCM :
 				self.walkTop()
@@ -73,8 +92,36 @@ class Player(object):
 				self.walkRight()
 			elif self.actionQueue[0] == Player.WalkLeftCM :
 				self.walkLeft()
+
+			elif self.actionQueue[0] == Player.UseBombCM :
+				self.useBomb()
+			elif self.actionQueue[0] == Player.UseBulletTopCM :
+				self.useBulletTop()
+			elif self.actionQueue[0] == Player.UseBulletDownCM :
+				self.useBulletDown()
+			elif self.actionQueue[0] == Player.UseBulletRightCM :
+				self.useBulletRight()
+			elif self.actionQueue[0] == Player.UseBulletLeftCM :
+				self.useBulletLeft()
+
+
 		if self.fall:
 			self.tall -= self.fallSpeed
+
+		self.revealerUpdate(isoBlocks)
+
+	def revealerUpdate(self, isoBlocks):
+
+		deadList = []
+		if self.revealerList:
+			for i in range(len(self.revealerList)):
+				if self.revealerList[i].isAlive():
+					self.revealerList[i].reveal(isoBlocks)
+				else:
+					deadList.append(i)
+			while deadList:
+				self.revealerList.pop(deadList[len(deadList) - 1])
+				deadList.pop(len(deadList) - 1)
 
 	def walkTop(self):					#TOP
 		if not self.walkTop_start:
@@ -143,6 +190,47 @@ class Player(object):
 				self.walkLeft_start = False
 				self.isoPos = self.targetIsoPos
 
+	def useBomb(self):					#BOMB
+
+		if self.bomb > 0:
+			self.bomb -= 1
+			self.revealerList.append(BomRevealer(self.screenPos , 300, 1.5))
+			self.actionQueue.pop(0)
+
+	def useBulletTop(self):				#Bullet_Top
+
+		if self.bullet > 0:
+			self.bullet -= 1
+			self.revealerList.append(MovingRevealer(self.screenPos, Player.BulletRadius
+				, Vector2(Player.BulletSpeed * getCos30(), Player.BulletSpeed * getSin30() *-1), Player.BulletLifeTime))
+			self.actionQueue.pop(0)
+
+	def useBulletDown(self):				#Bullet_Down
+
+		if self.bullet > 0:
+			self.bullet -= 1
+			self.revealerList.append(MovingRevealer(self.screenPos, Player.BulletRadius
+				, Vector2(Player.BulletSpeed * getCos30() *-1 , Player.BulletSpeed * getSin30()), Player.BulletLifeTime))
+			self.actionQueue.pop(0)
+
+	def useBulletRight(self):				#Bullet_Right
+
+		if self.bullet > 0:
+			self.bullet -= 1
+			self.revealerList.append(MovingRevealer(self.screenPos, Player.BulletRadius
+				, Vector2(Player.BulletSpeed * getCos30(), Player.BulletSpeed * getSin30()), Player.BulletLifeTime))
+			self.actionQueue.pop(0)
+
+	def useBulletLeft(self):				#Bullet_Left
+
+		if self.bullet > 0:
+			self.bullet -= 1
+			self.revealerList.append(MovingRevealer(self.screenPos, Player.BulletRadius
+				, Vector2(Player.BulletSpeed * getCos30() *-1, Player.BulletSpeed * getSin30() *-1), Player.BulletLifeTime))
+			self.actionQueue.pop(0)
+
+
+
 
 	def __startMove(self, x, y): #Utility
 
@@ -190,6 +278,18 @@ class Player(object):
 
 	def getHeight(self):
 		return self.height
+
+	def getBomb(self):
+		return self.bomb
+
+	def setBomb(self, n):
+		self.bomb = n
+
+	def getBullet(self):
+		return self.bullet
+
+	def setBullet(self, n):
+		self.bullet = n
 
 
 

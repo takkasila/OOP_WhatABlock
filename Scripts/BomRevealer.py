@@ -5,7 +5,6 @@ class BomRevealer(Revealer):
 		super(BomRevealer, self).__init__(startScreenPos)
 		self.maxRadius = maxRadius
 		self.revealSpeed = revealSpeed
-		self.alive = True
 
 	def updateReveal(self):
 		if self.radius < self.maxRadius:
@@ -18,5 +17,4 @@ class BomRevealer(Revealer):
 			self.updateReveal()
 			super(BomRevealer, self).reveal(isoBlocks)
 
-	def isAlive(self):
-		return self.alive
+
