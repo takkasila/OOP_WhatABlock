@@ -33,13 +33,14 @@ class WhatABlockGame(object):
 	inputManager = ''
 	myRFIDReader = ''
 	player_revealver = ''
+	bgSound = ''
 
 
 	def __init__(self, WINDOW_SIZE):
 
 		self.WINDOW_SIZE = WINDOW_SIZE
 		self.isGameOver = False
-		self.playWithRFID = True
+		self.playWithRFID = False
 
 		self.folderDir = os.path.split(os.getcwd())[0]
 		self.assetDir = self.folderDir + '/Assets/'
@@ -60,16 +61,27 @@ class WhatABlockGame(object):
 
 		self.player_revealver = Revealer(IsoToScreen(self.player.getIsoPos(), self.mapCollection.getBlockSize().getX(), self.mapCollection.getBlockSize().getY()), 60)
 
+		pygame.mixer.music.play(-1)
+
+
 	def loadAssets(self):
 		
+		pygame.mixer.music.load(self.assetDir + 'bgSound.mp3')
 		self.mapCollection = MapCollection(currentMap = 0, assetDir = self.assetDir, WINDOW_SIZE = self.WINDOW_SIZE)
 		self.player = Player(self.mapCollection.getCurrentMapObject().getPlayerStartPos(), assetDir = self.assetDir, blockWidth = self.mapCollection.getBlockSize().getX(), blockHeight = self.mapCollection.getBlockSize().getY(), moveSpeed = 0.1)
+		self.fontSize = 50
+		self.myFont = pygame.font.Font(self.assetDir + "Universe.ttf", self.fontSize)
+		self.numberOfDeath = 0
 
 
 	def render(self):
 
 		#sent player into map for order of rendering purpose
-		self.mapCollection.renderCurrentMap(self.display, camPos = self.cam.getPos(), player = self.player) 
+		self.mapCollection.renderCurrentMap(self.display, camPos = self.cam.getPos(), player = self.player)
+
+		deathCountText = str(self.numberOfDeath)
+		label = self.myFont.render( deathCountText, 1, (0,0,0))
+		self.display.blit(label, (self.WINDOW_SIZE.getX()/2 - len(deathCountText) * self.fontSize/2 + 10, self.WINDOW_SIZE.getY()/8))
 
 		pygame.display.flip()
 
@@ -106,6 +118,7 @@ class WhatABlockGame(object):
 			self.player.setFall(False)
 			self.player.setIsoPos(self.mapCollection.getCurrentMapObject().getPlayerStartPos())
 			self.player.setMoveAble(True)
+			self.numberOfDeath += 1
 
 	def checkChangeWorld(self):
 		playerPos = self.player.getIsoPos()

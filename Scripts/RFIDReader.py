@@ -1,6 +1,7 @@
 from practicum import findDevices
 from peri import PeriBoard
 from time import sleep
+from usb import USBError
 
 class RFIDReader(object):
 
@@ -22,7 +23,10 @@ class RFIDReader(object):
 
 	def getInput(self):
 		#return id of card, or 9999 if no input
-		inRFID = self.board.getRFID()[0]
+		try:
+			inRFID = self.board.getRFID()[0]
+		except USBError:
+			return 9999
 
 		if self.sendAble:
 			if inRFID == 0:

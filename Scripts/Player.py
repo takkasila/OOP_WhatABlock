@@ -194,7 +194,7 @@ class Player(object):
 
 		if self.bomb > 0:
 			self.bomb -= 1
-			self.revealerList.append(BomRevealer(self.screenPos , 300, 1.5))
+			self.revealerList.append(BomRevealer(self.screenPos , 300, 3))
 			self.actionQueue.pop(0)
 
 	def useBulletTop(self):				#Bullet_Top

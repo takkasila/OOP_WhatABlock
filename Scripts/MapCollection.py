@@ -47,7 +47,18 @@ class MapCollection(object):
 		]
 
 		map3xyBlockList = [
+		[[7,1],[9,1]],
+		[[7,2],[9,2]],
+		[[7,3],[9,3]],
+		[[7,4],[9,4]],
+		[[7,5],[9,5]],
+		[[7,6],[8,6],[9,6]],
+		[[8,7]],
 		[[8,8]]
+		]
+
+		map4xyBlockList = [
+		[[0,0]]
 		]
 
 		Map1 = Map(worldIndex = 0, playerStartPos = Vector2(0,0), blockWidth = self.blockWidth, blockHeight = self.blockHeight
@@ -57,12 +68,15 @@ class MapCollection(object):
 			,startBlockIso = Vector2(1,0), finishBlockIso = Vector2(7,4), xyBlockList= map2xyBlockList)
 
 		Map3 = Map(worldIndex = 2, playerStartPos = Vector2(8,8), blockWidth = self.blockWidth, blockHeight = self.blockHeight
-			,startBlockIso = Vector2(8,8), finishBlockIso = Vector2(0,0), xyBlockList= map3xyBlockList)
+			,startBlockIso = Vector2(8,8), finishBlockIso = Vector2(7,1), xyBlockList= map3xyBlockList)
 
+		Map4 = Map(worldIndex = 3, playerStartPos = Vector2(0,0), blockWidth = self.blockWidth, blockHeight = self.blockHeight
+			,startBlockIso = Vector2(0,0), finishBlockIso = Vector2(5,5), xyBlockList= map4xyBlockList)
 		self.mapList = []
 		self.mapList.append(Map1)
 		self.mapList.append(Map2)
 		self.mapList.append(Map3)
+		self.mapList.append(Map4)
 
 	def loadAsset(self):
 
