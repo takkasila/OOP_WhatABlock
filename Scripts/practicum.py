@@ -66,8 +66,12 @@ class McuBoard(object):
         If successful, the method returns a tuple of length specified
         containing data returned from the MCU board.
         '''
-        reqType = usb.TYPE_VENDOR | usb.RECIP_DEVICE | usb.ENDPOINT_IN
-        buf = self.handle.controlMsg(
-                reqType, request, length, value=value, index=index)
-        return buf
+        try:
+            reqType = usb.TYPE_VENDOR | usb.RECIP_DEVICE | usb.ENDPOINT_IN
+            buf = self.handle.controlMsg(
+                    reqType, request, length, value=value, index=index)
+            return buf
+        except USBError:
+            return ()
+
 

@@ -21,7 +21,7 @@ import os
 #	Add teleporting sound(change to new level)
 class WhatABlockGame(object):
 
-	WINDOW_SIZE = Vector2(1024, 768)
+	WINDOW_SIZE = Vector2(1366, 768)
 	Clock = 0
 	isGameOver = False
 	folderDir = ''
@@ -38,27 +38,29 @@ class WhatABlockGame(object):
 
 	def __init__(self, WINDOW_SIZE):
 
-		self.WINDOW_SIZE = WINDOW_SIZE
+		self.WINDOW_SIZE = Vector2(1366, 768)
 		self.isGameOver = False
-		self.playWithRFID = False
+		self.playWithRFID = True
 
 		self.folderDir = os.path.split(os.getcwd())[0]
 		self.assetDir = self.folderDir + '/Assets/'
 
-		pygame.init()
-		self.clock = pygame.time.Clock()
-		self.display = pygame.display.set_mode((WINDOW_SIZE.getX(), WINDOW_SIZE.getY()))
-		pygame.display.set_caption('What A Block')
-
-		self.loadAssets()
-		
-		self.cam = Camera(offSet = Vector2(WINDOW_SIZE.getX()/2 , WINDOW_SIZE.getY()/2 - self.player.getHeight()/2), camSize = WINDOW_SIZE)
 
 		self.inputManager = InputManager()
 		if self.playWithRFID:
 			self.myRFIDReader = RFIDReader()
 			self.inputManager.setRFIDInput(self.myRFIDReader)
 
+		pygame.init()
+		self.clock = pygame.time.Clock()
+		self.display = pygame.display.set_mode((self.WINDOW_SIZE.getX(), self.WINDOW_SIZE.getY()), pygame.FULLSCREEN)
+		pygame.display.set_caption('What A Block')
+
+		self.loadAssets()
+		
+		self.cam = Camera(offSet = Vector2(self.WINDOW_SIZE.getX()/2 , self.WINDOW_SIZE.getY()/2 - self.player.getHeight()/2), camSize = self.WINDOW_SIZE)
+
+		
 		self.player_revealver = Revealer(IsoToScreen(self.player.getIsoPos(), self.mapCollection.getBlockSize().getX(), self.mapCollection.getBlockSize().getY()), 60)
 
 		pygame.mixer.music.play(-1)
@@ -69,8 +71,12 @@ class WhatABlockGame(object):
 		pygame.mixer.music.load(self.assetDir + 'bgSound.mp3')
 		self.mapCollection = MapCollection(currentMap = 0, assetDir = self.assetDir, WINDOW_SIZE = self.WINDOW_SIZE)
 		self.player = Player(self.mapCollection.getCurrentMapObject().getPlayerStartPos(), assetDir = self.assetDir, blockWidth = self.mapCollection.getBlockSize().getX(), blockHeight = self.mapCollection.getBlockSize().getY(), moveSpeed = 0.1)
-		self.fontSize = 50
-		self.myFont = pygame.font.Font(self.assetDir + "Universe.ttf", self.fontSize)
+		self.mainFontSize = 50
+		self.secondFontSize = 30
+		self.thirdFontSize = 18
+		self.mainFont = pygame.font.Font(self.assetDir + "Universe.ttf", self.mainFontSize)
+		self.secondFont = pygame.font.Font(self.assetDir + "Universe.ttf", self.secondFontSize)
+		self.thirdFont = pygame.font.Font(self.assetDir + "Universe.ttf", self.thirdFontSize)
 		self.numberOfDeath = 0
 
 
@@ -79,11 +85,28 @@ class WhatABlockGame(object):
 		#sent player into map for order of rendering purpose
 		self.mapCollection.renderCurrentMap(self.display, camPos = self.cam.getPos(), player = self.player)
 
-		deathCountText = str(self.numberOfDeath)
-		label = self.myFont.render( deathCountText, 1, (0,0,0))
-		self.display.blit(label, (self.WINDOW_SIZE.getX()/2 - len(deathCountText) * self.fontSize/2 + 10, self.WINDOW_SIZE.getY()/8))
+
+		self.renderGUI()
 
 		pygame.display.flip()
+
+	def renderGUI(self):
+
+		levelText = str(self.mapCollection.getCurrentMapIndex())	#Level
+		renderlevelText = self.thirdFont.render( levelText, 1, (255,255,255))
+		self.display.blit(renderlevelText, (self.WINDOW_SIZE.getX()/2 - len(levelText) * self.thirdFontSize/2 + 5, self.WINDOW_SIZE.getY()*8.3/20))		
+
+		deathCountText = str(self.numberOfDeath)	#Death
+		renderDeathCountText = self.mainFont.render( deathCountText, 1, (0,0,0))
+		self.display.blit(renderDeathCountText, (self.WINDOW_SIZE.getX()/2 - len(deathCountText) * self.mainFontSize/2 + 10, self.WINDOW_SIZE.getY()/9))
+
+		bombCountText = str(self.player.getBomb())	#Bomb
+		renderBombCountText = self.secondFont.render( bombCountText, 1, (127,100,0))
+		self.display.blit(renderBombCountText, (self.WINDOW_SIZE.getX()*9/20 - len(deathCountText) * self.secondFontSize/2 + 10, self.WINDOW_SIZE.getY()*17/20))
+
+		bulletCountText = str(self.player.getBullet()) #Bullet
+		renderBulletCountText = self.secondFont.render( bulletCountText, 1, (127,100,0))
+		self.display.blit(renderBulletCountText, (self.WINDOW_SIZE.getX()*11/20 - len(deathCountText) * self.secondFontSize/2 + 10, self.WINDOW_SIZE.getY()*17/20))
 
 	def update(self):
 

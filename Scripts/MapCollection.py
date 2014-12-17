@@ -47,18 +47,23 @@ class MapCollection(object):
 		]
 
 		map3xyBlockList = [
-		[[7,1],[9,1]],
-		[[7,2],[9,2]],
-		[[7,3],[9,3]],
-		[[7,4],[9,4]],
-		[[7,5],[9,5]],
-		[[7,6],[8,6],[9,6]],
-		[[8,7]],
-		[[8,8]]
+		[[0,0],[0,1],[0,2],[0,3],[0,4]],
+		[[1,0]		,[1,2],[1,3],[1,4]],
+		[[2,0],[2,1],[2,2],[2,3],[2,4]],
+		[[3,0],[3,1]	  ,[3,3],[3,4]],
+		[[4,0],[4,1],[4,2],[4,3],[4,4]],
+		[[5,0],[5,1],[5,2]      ,[5,4]],
+		[[6,0],[6,1],[6,2],[6,3],[6,4]],
+		[[7,0],[7,1],[7,2],[7,3],[7,4]],
 		]
 
 		map4xyBlockList = [
-		[[0,0]]
+		[[0,0],[1,0],[2,0],[3,0],[4,0]],
+		[[4,1]],
+		[[4,2],[5,2],[6,2]],
+		[[6,3]],
+		[[5,4],[6,4],[7,4],[8,4],[9,4],[10,4]],
+		[[6,5]]
 		]
 
 		Map1 = Map(worldIndex = 0, playerStartPos = Vector2(0,0), blockWidth = self.blockWidth, blockHeight = self.blockHeight
@@ -67,11 +72,11 @@ class MapCollection(object):
 		Map2 = Map(worldIndex = 1, playerStartPos = Vector2(1,0), blockWidth = self.blockWidth, blockHeight = self.blockHeight
 			,startBlockIso = Vector2(1,0), finishBlockIso = Vector2(7,4), xyBlockList= map2xyBlockList)
 
-		Map3 = Map(worldIndex = 2, playerStartPos = Vector2(8,8), blockWidth = self.blockWidth, blockHeight = self.blockHeight
-			,startBlockIso = Vector2(8,8), finishBlockIso = Vector2(7,1), xyBlockList= map3xyBlockList)
+		Map3 = Map(worldIndex = 2, playerStartPos = Vector2(7,0), blockWidth = self.blockWidth, blockHeight = self.blockHeight
+			,startBlockIso = Vector2(7,0), finishBlockIso = Vector2(0,4), xyBlockList= map3xyBlockList)
 
-		Map4 = Map(worldIndex = 3, playerStartPos = Vector2(0,0), blockWidth = self.blockWidth, blockHeight = self.blockHeight
-			,startBlockIso = Vector2(0,0), finishBlockIso = Vector2(5,5), xyBlockList= map4xyBlockList)
+		Map4 = Map(worldIndex = 3, playerStartPos = Vector2(10,4), blockWidth = self.blockWidth, blockHeight = self.blockHeight
+			,startBlockIso = Vector2(10,4), finishBlockIso = Vector2(0,0), xyBlockList= map4xyBlockList)
 		self.mapList = []
 		self.mapList.append(Map1)
 		self.mapList.append(Map2)
